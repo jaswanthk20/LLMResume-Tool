@@ -1,0 +1,4 @@
+Django
+requests
+pymupdf
+docxtpl

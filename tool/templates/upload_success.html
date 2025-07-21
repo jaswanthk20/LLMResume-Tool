@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing Complete</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="flex-center success-page">
+    <div class="main-card">
+        <div class="logo-section">
+            <img src="{% static 'logo.png' %}" alt="S2 Logo">
+        </div>
+        <h1 class="s2-title">Processing Complete</h1>
+        <p class="s2-subtext">
+            Resume file processed successfully.
+        </p>
+        <div class="llm-results">
+            <h3>LLM Processing Results:</h3>
+            {% if table_data %}
+            <table class="results-table">
+                {% for row in table_data %}
+                <tr>
+                    <th>{{ row.label }}</th>
+                    <td>{{ row.value|linebreaksbr }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>{{ llm_results }}</p>
+            {% endif %}
+        </div>
+        {% if docx_path %}
+        <a href="{{ docx_path }}" download class="btn btn-primary">Download Formatted DOCX</a>
+        {% endif %}
+        {% if json_path %}
+        <a href="{{ json_path }}" download class="btn btn-secondary">Download JSON</a>
+        {% endif %}
+        <a href="/" class="btn btn-primary" style="margin-top: 1.2rem;">Process Another Resume</a>
+    </div>
+</body>
+</html>
