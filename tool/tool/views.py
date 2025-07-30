@@ -28,26 +28,70 @@ def uploadpage(request):
 
     return render(request, 'upload.html')
 
+
 def uploadsuccess(request):
     processing_results = request.session.pop('llm_processing_results', None)
     docx_path = request.session.pop('generated_docx', None)
     parsed_results = request.session.pop('parsed_results', None)
     json_path = request.session.pop('json_path', None)
 
-    # Define only the remaining fields for display
-    sections = [
-        ('Name', 'name'),
-        ('Professional Summary', 'professional_summary'),
-        ('Professional Experience', 'professional_experience'),
-        ('Education', 'education'),
-        ('Certification & Specialized Training', 'certification_&_specialized_training'),
-        ('Skills', 'skills'),
-    ]
+    def flatten_list_of_dicts(items, section):
+        result = []
+        for item in items:
+            if isinstance(item, dict):
+                title = (item.get("title") or "").strip()
+                dates = (item.get("dates") or "").strip()
+                description = (item.get("description") or "").strip()
+
+                if section == "professional_experience":
+                    header = f"{title} ({dates})" if title and dates else title or dates
+                    full_text = f"{header}\n{description}" if header else description
+                    result.append(full_text.strip())
+
+                elif section == "education":
+                    degree = (item.get("degree") or "").strip()
+                    institution = (item.get("institution") or "").strip()
+                    dates = (item.get("dates") or "").strip()
+                    edu_line = f"{degree} at {institution} ({dates})".strip(" ()")
+                    result.append(edu_line)
+
+                elif section == "certification_&_specialized_training":
+                    name = (item.get("name") or "").strip()
+                    date = (item.get("date") or "").strip()
+                    cert_line = f"{name} ({date})" if name and date else name or date
+                    result.append(cert_line)
+
+                else:
+                    parts = [f"{k.capitalize()}: {v}" for k, v in item.items() if v]
+                    result.append("; ".join(parts))
+
+        return "\n\n".join(result)
+
+    def flatten_list_of_strings(items):
+        return ", ".join(items)
 
     table_data = []
     if isinstance(parsed_results, dict):
-        for label, key in sections:
-            table_data.append({'label': label, 'value': parsed_results.get(key, '')})
+        for label, key in [
+            ('Name', 'name'),
+            ('Professional Summary', 'professional_summary'),
+            ('Professional Experience', 'professional_experience'),
+            ('Education', 'education'),
+            ('Certification & Specialized Training', 'certification_&_specialized_training'),
+            ('Skills', 'skills'),
+        ]:
+            value = parsed_results.get(key, '')
+            if isinstance(value, list):
+                if value and isinstance(value[0], dict):
+                    value = flatten_list_of_dicts(value, key)
+                elif value and isinstance(value[0], str):
+                    value = flatten_list_of_strings(value)
+                else:
+                    value = ""
+            elif not isinstance(value, str):
+                value = str(value)
+
+            table_data.append({'label': label, 'value': value})
 
     context = {
         'llm_results': processing_results,

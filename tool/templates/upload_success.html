@@ -17,26 +17,32 @@
         <p class="s2-subtext">
             Resume file processed successfully.
         </p>
+
         <div class="llm-results">
             <h3>Results:</h3>
             {% if table_data %}
-            <table class="results-table">
-                {% for row in table_data %}
-                <tr>
-                    <th>{{ row.label }}</th>
-                    <td>{{ row.value|linebreaksbr }}</td>
-                </tr>
-                {% endfor %}
-            </table>
+                <table class="results-table">
+                    {% for row in table_data %}
+                    <tr> 
+                        <th>{{ row.label }}</th>
+                        <td>{{ row.value|linebreaksbr }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% elif llm_results %}
+                <div class="raw-llm-response">
+                    <pre>{{ llm_results }}</pre>
+                </div>
             {% else %}
-            <p>{{ llm_results }}</p>
+                <p>No results to display.</p>
             {% endif %}
         </div>
+
         {% if docx_path %}
-        <a href="{{ docx_path }}" download class="btn btn-primary">Download Formatted DOCX</a>
+            <a href="{{ docx_path }}" download class="btn btn-primary">Download Formatted DOCX</a>
         {% endif %}
         {% if json_path %}
-        <a href="{{ json_path }}" download class="btn btn-secondary">Download JSON</a>
+            <a href="{{ json_path }}" download class="btn btn-secondary">Download JSON</a>
         {% endif %}
         <a href="/" class="btn btn-primary" style="margin-top: 1.2rem;">Process Another Resume</a>
     </div>
