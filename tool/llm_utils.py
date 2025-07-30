@@ -129,4 +129,3 @@ def process_pdf(uploaded_file):
         "/static/" + output_docx_path.name,
         data,
     )
-

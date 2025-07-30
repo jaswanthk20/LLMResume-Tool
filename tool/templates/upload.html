@@ -4,22 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <title>S2 Resume Processing Utility</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="upload-page flex-center">
-    <div class="center-card">
-        <img src="{% static 'logo.png' %}" alt="S2 Logo" class="s2logo">
-        <h1 class="s2-title">Resume Processing Utility</h1>
+    <div class="outer-box">
+    <div class="header-icon">
+    <img src="{% static 'rocket.png' %}" alt="Rocket Icon" class="rocket"></div>
+        <h1 class="s2-title">S2 Resume Utility</h1>
         <p class="desc">
-            Submit a DOCX or PDF resume to receive a standardized S2-format Word document.
+            Upload your DOCX or PDF resume to receive a standardized Word resume in the S2 corporate format.
         </p>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <label for="resume_file" class="form-label">Select a DOCX or PDF resume file:</label>
-            <input type="file" id="resume_file" name="resume_file" accept=".pdf,.doc,.docx" required>
-            <button type="submit">Upload and Inspect</button>
+    
+            <input type="file" id="resume_file" name="resume_file" accept=".pdf,.doc,.docx" required hidden onchange="updateFileName()">
+            <label for="resume_file" id="fileLabel" class="resume">
+                <img src="{% static 'folder-icon.png' %}" alt="Folder Icon" class="box1">
+                <span id="fileLabelText">Select a resume file</span>
+            </label>
+            <button type="submit">Upload</button>
         </form>
-    </div>
+ 
+<script>
+function updateFileName() {
+    const input = document.getElementById('resume_file');
+    const labelText = document.getElementById('fileLabelText');
+    if (input.files.length > 0) {
+        labelText.textContent = input.files[0].name;
+    } else {
+        labelText.textContent = "Select a resume file";
+    }
+}
+</script>
+</div>
 </body>
 </html>
