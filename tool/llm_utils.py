@@ -1,3 +1,4 @@
+import gc
 import fitz  # PyMuPDF
 import requests
 import re
@@ -5,6 +6,13 @@ from pathlib import Path
 from docxtpl import DocxTemplate
 import os
 import json
+
+def cleanup_old_files(directory, keep_filename):
+    for f in os.listdir(directory):
+        path = os.path.join(directory, f)
+        if f != keep_filename and os.path.isfile(path):
+            os.remove(path)
+
 
 # Constants
 GOOGLE_GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBmnI0Hc1FgPiZlgViP84OllWcwoiVnc7g")
@@ -109,7 +117,11 @@ def process_pdf(uploaded_file):
         return "Failed to parse Gemini response into JSON.", "", {}
 
     output_dir = Path(__file__).parent / "static"
+    output_dir.mkdir(parents=True, exist_ok=True)  
+    
+    # Clean up old .docx files except the new one 
     output_docx_path = output_dir / "filled_resume.docx"
+    cleanup_old_files(output_dir, keep_filename=output_docx_path.name)
     fill_docx_template(data, output_docx_path)
 
     return (
@@ -117,3 +129,4 @@ def process_pdf(uploaded_file):
         "/static/" + output_docx_path.name,
         data,
     )
+
