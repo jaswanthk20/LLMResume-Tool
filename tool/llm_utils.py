@@ -3,8 +3,8 @@ import requests
 import re
 from pathlib import Path
 from docxtpl import DocxTemplate
-import json
 import os
+import json
 
 # Constants
 GOOGLE_GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBmnI0Hc1FgPiZlgViP84OllWcwoiVnc7g")
@@ -54,8 +54,6 @@ For "professional_experience", "education", and "certification_&_specialized_tra
 For "skills", return a LIST of strings.
 For "professional_summary" and "name", return a single string.
 
-Return the response as a single, minified JSON object. Ensure the JSON is valid and can be parsed directly.
-
 Resume Text:
 \"\"\"
 {parsed_text}
@@ -92,44 +90,30 @@ def fill_docx_template(data, output_path, template_path=Path(__file__).parent / 
     doc.save(str(output_path))
     print(f"[INFO] DOCX saved to {output_path}")
 
-# Save JSON
-def save_parsed_data(data, output_dir, basename="parsed_resume"):
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    json_path = output_dir / f"{basename}.json"
-    with open(json_path, "w", encoding="utf-8") as jf:
-        json.dump(data, jf, ensure_ascii=False, indent=2)
-    print(f"[INFO] Parsed data saved to {json_path}")
-    return json_path
-
 # Main pipeline
 def process_pdf(uploaded_file):
     pdf_bytes = uploaded_file.read()
     parsed_text = extract_text_from_pdf(pdf_bytes)
     if parsed_text.startswith("[PDF PARSE ERROR]"):
-        return parsed_text, "", {}, ""
+        return parsed_text, "", {}
 
     llm_response = extract_resume_fields(parsed_text)
     print("[DEBUG] Raw Gemini response:\n", llm_response)
 
     if llm_response.startswith("[LLM ERROR]") or "[PARSE ERROR]" in llm_response:
         print("[ERROR] Gemini failed: ", llm_response)
-        return llm_response, "", {}, ""
+        return llm_response, "", {}
 
     data = parse_llm_response(llm_response)
     if not data:
-        return "Failed to parse Gemini response into JSON.", "", {}, ""
+        return "Failed to parse Gemini response into JSON.", "", {}
 
     output_dir = Path(__file__).parent / "static"
     output_docx_path = output_dir / "filled_resume.docx"
     fill_docx_template(data, output_docx_path)
 
-    base_name = Path(uploaded_file.name).stem or "parsed_resume"
-    json_path = save_parsed_data(data, output_dir, base_name)
-
     return (
         llm_response,
         "/static/" + output_docx_path.name,
         data,
-        "/static/" + json_path.name,
     )

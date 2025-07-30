@@ -4,13 +4,13 @@
   "professional_experience": [
     {
       "title": "Packaged Development Analyst",
-      "company": null,
+      "company": "",
       "dates": "Dec 2022 - Present",
-      "description": "SAP Datasphere Expert with 3 years of experience in end-to-end implementations, creating Views, Analytical Models, Data Flows, Replication Flows, and Task Chains. Skilled in data ingestion via both Data Federation and Replication, replicating delta-enabled CDS views from SAP S/4HANA for real-time analytics and utilizing HANA functions for currency/unit conversions and complex business logic. Strong in security and governance, implementing Data Access Controls (DAC) for row-level security and managing roles, database users, OAuth2.0, and integration connections. Hands-on with SAC and ABAP CDS, building dashboards and visualizations in SAP Analytics Cloud, and developing CDS views using ADT in Eclipse for analytics and reporting. Good exposure with Non-SAP modelling and visualization tools like Qlik Compose, Denodo, Data Mart and Power BI. Collaborative and proactive, worked closely with functional teams, mentored junior members, and maintained technical documentation to ensure scalable, clean, and optimized solutions following SAP best practices."
+      "description": "SAP Datasphere Expert with 3 years of experience in end-to-end implementations, creating Views, Analytical Models, Data Flows, Replication Flows, and Task Chains. Skilled in data ingestion via both Data Federation and Replication, replicating delta-enabled CDS views from SAP S/4HANA for real-time analytics and utilizing HANA functions for currency/unit conversions and complex business logic. Strong in security and governance, implementing Data Access Controls (DAC) for row-level security and managing roles, database users, OAuth2.0, and integration connections. Hands-on with SAC and ABAP CDS, building dashboards and visualizations in SAP Analytics Cloud, and developing CDS views using ADT in Eclipse for analytics and reporting. Good exposure with Non-SAP modelling and visualization tools like Qlik Compose, Denodo, Data Mart and Power BI. Collaborative and proactive, worked closely with functional teams, mentored junior members, and maintained technical documentation to ensure scalable, clean, and optimized solutions following SAP best practices. Proficient in SAP Datasphere development including admin activities. Knowledge of SAP FI and SD functional module. Familiar with SAP Analytics Cloud Stories and Core Data Services (CDS)."
     },
     {
       "title": "Associate Development Engineer",
-      "company": null,
+      "company": "",
       "dates": "Sept 2021 - Nov 2022",
       "description": "Built SAC dashboards for various business areas: Recruitment, MM, Procurement, Finance and Plant Maintenance. Utilized Story Filters, Page Filters, Input Controls, and Dynamic Texts to create interactive and user-friendly dashboards. Implemented Calculated Measures and Restricted Key Figures within SAC stories for customized business metrics. Worked with SAC Planning — created planning models, data locking, and scenarios. Integrated SAC with live and import connections, scheduled imports, and used performance optimization techniques. Built Multi-Model Dashboards by blending data from various sources (Datasphere, HANA, BW, Excel)"
     }
@@ -24,30 +24,40 @@
   ],
   "certification_&_specialized_training": [
     {
-      "name": "SAP Certified Data Analyst Associate",
-      "issuer": "SAP",
-      "date": null
+      "name": "SAP Certified Data Analyst Associate"
     }
   ],
   "skills": [
     "SAP Datasphere",
     "ETL",
-    "SAP Analytics Cloud (SAC)",
-    "Core Data Services (CDS)",
-    "ABAP CDS",
+    "Analytical Tools",
+    "Views",
+    "Analytical Models",
+    "Data Flows",
+    "Replication Flows",
+    "Task Chains",
+    "Data Federation",
+    "Replication",
+    "CDS views",
     "SAP S/4HANA",
-    "HANA",
-    "SAP FI",
-    "SAP SD",
+    "HANA functions",
+    "Data Access Controls (DAC)",
+    "SAP Analytics Cloud (SAC)",
+    "ABAP CDS",
+    "ADT in Eclipse",
     "Qlik Compose",
     "Denodo",
     "Data Mart",
     "Power BI",
+    "SAP FI",
+    "SAP SD",
+    "SAC Planning",
+    "HANA",
     "BW",
     "Excel",
-    "Communication",
-    "Teamwork",
     "Problem-solving",
-    "Analytical skills"
+    "Analytical skills",
+    "Teamwork",
+    "Communication"
   ]
 }

@@ -12,13 +12,11 @@ def uploadpage(request):
                 llm_text,
                 docx_path,
                 parsed_data,
-                json_path,
             ) = llm_utils.process_pdf(uploaded_file)
 
             request.session['llm_processing_results'] = llm_text
             request.session['generated_docx'] = docx_path
             request.session['parsed_results'] = parsed_data
-            request.session['json_path'] = json_path
 
             print("File upload handled and processed")
             return redirect('/uploadsuccess/')
@@ -33,7 +31,6 @@ def uploadsuccess(request):
     processing_results = request.session.pop('llm_processing_results', None)
     docx_path = request.session.pop('generated_docx', None)
     parsed_results = request.session.pop('parsed_results', None)
-    json_path = request.session.pop('json_path', None)
 
     def flatten_list_of_dicts(items, section):
         result = []
@@ -96,7 +93,6 @@ def uploadsuccess(request):
     context = {
         'llm_results': processing_results,
         'docx_path': docx_path,
-        'json_path': json_path,
         'table_data': table_data,
     }
 
