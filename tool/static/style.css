@@ -1,0 +1,209 @@
+body {
+ 
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+ 
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+body.upload-page {
+    background-image: url('B3.png'),url('backg.png');
+    background-repeat: no-repeat, no-repeat;
+    background-size: 540px 500px, cover;
+    background-position: 80px center, center;
+}
+ 
+.outer-box{
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    border: 10px black;
+    margin-right:300px;
+}
+ 
+.rocket{
+    width: 96px;
+    height: auto;
+    margin-bottom: 1rem;
+    display: block;
+    display: inline-block;
+}
+ 
+.resume{
+    display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 12px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        color: #1a1a1a;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s ease;
+}
+ 
+.box1{
+    width: 24px;
+    height: 24px;
+}
+ 
+img {
+    width: 300px;
+    height: auto;
+}
+ 
+.main-card {
+    background: #fff;
+    margin: 40px auto;
+    padding: 3rem 3.5rem 3.5rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+    max-width: 620px;
+    width: 100%;
+    text-align: center;
+    min-height: 600px;
+    border: 10px black;
+}
+ 
+.center-card {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    border: 10px black;
+}
+ 
+.logo-section img {
+    height: 54px;
+    margin-bottom: 0.7rem;
+}
+ 
+.s2-title {
+    color: #F6A623;
+    font-size: 2.3rem;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.3rem;
+}
+ 
+.s2-desc {
+    color: #174B95;
+    font-weight: bold;
+    font-size: 1.35rem;
+    margin: 0.7rem 0 0.2rem 0;
+}
+ 
+.s2-subtext {
+    color: #626c79;
+    font-size: 0.97rem;
+    margin-bottom: 1.3rem;
+}
+ 
+.upload-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    display: block;
+}
+ 
+input[type="file"] {
+    width: 100%;
+    margin-bottom: 1.2rem;
+}
+ 
+input[type="text"], input[type="email"] {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+}
+ 
+button {
+    background: #F6A623;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 0.82rem;
+    border-radius: 4px;
+    font-size: 1.07rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.18s;
+    margin-top: 0.4rem;
+    box-shadow: 0 1px 4px #f6a62318;
+}
+ 
+button:hover {
+    background: #e29b15;
+}
+ 
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+ 
+.results-table th {
+    text-align: left;
+    padding: 0.3rem;
+    background: #174B95;
+    color: #fff;
+    width: 40%;
+}
+ 
+.results-table td {
+    padding: 0.3rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+ 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+ 
+.card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+ 
+.file-upload {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  color: #333;
+}
+ 
+.btn-outline{
+background-color: yellow;
+color: black;
+}
