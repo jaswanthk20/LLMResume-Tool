@@ -52,6 +52,7 @@ You are an expert resume parser. Based on the following resume text, extract the
 
 For "professional_experience", "education", and "certification_&_specialized_training", return a LIST of dictionaries, where each dictionary represents an entry and contains relevant sub-fields (e.g., for experience: "title", "company", "dates", "description"; for education: "degree", "institution", "dates").
 For "skills", return a LIST of strings.
+For "address" return a single string.
 For "professional_summary" and "name", return a single string.
 
 Resume Text:
@@ -79,6 +80,7 @@ def parse_llm_response(response_text):
 def fill_docx_template(data, output_path, template_path=Path(__file__).parent / "templates" / "Final Template.docx"):
     doc = DocxTemplate(str(template_path))
     context = {
+        "address": data.get("address", "N/A"),
         "name": data.get("name", "N/A"),
         "professional_summary": data.get("professional_summary", "No summary."),
         "skills": data.get("skills", []),
