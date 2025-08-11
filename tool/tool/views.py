@@ -70,6 +70,7 @@ def uploadsuccess(request):
     table_data = []
     if isinstance(parsed_results, dict):
         for label, key in [
+            ('address', 'address'),
             ('Name', 'name'),
             ('Professional Summary', 'professional_summary'),
             ('Professional Experience', 'professional_experience'),
