@@ -8,10 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="flex-center success-page">
+<body class="upload-page flex-center">
     <div class="main-card">
         <div class="logo-section">
-            <img src="{% static 'logo.png' %}" alt="S2 Logo">
         </div>
         <h1 class="s2-title">Processing Complete</h1>
         <p class="s2-subtext">
@@ -30,7 +29,7 @@
                     {% endfor %}
                 </table>
             {% elif llm_results %}
-                <div class="raw-llm-response">
+                <div class= "raw-llm-response">
                     <pre>{{ llm_results }}</pre>
                 </div>
             {% else %}
@@ -39,10 +38,13 @@
         </div>
 
         {% if docx_path %}
-            <a href="{{ docx_path }}" download class="btn btn-primary">Download Formatted DOCX</a>
+        <div class="button-row">
+            <a href="{{ docx_path }}" download class="uploadbutton">Download Formatted DOCX</a>
+            <a href="/" class="uploadbutton" style="margin-top: 1.2rem;">Process Another Resume</a>
+        </div>
         {% endif %}
 
-        <a href="/" class="btn btn-primary" style="margin-top: 1.2rem;">Process Another Resume</a>
+        
     </div>
 </body>
 </html>

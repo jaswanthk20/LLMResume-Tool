@@ -74,7 +74,7 @@ img {
     width: 100%;
     text-align: center;
     min-height: 600px;
-    border: 10px black;
+    border: 4px solid black;
 }
  
 .center-card {
@@ -136,7 +136,39 @@ input[type="text"], input[type="email"] {
     border-radius: 4px;
     border: 1px solid #bbb;
 }
- 
+
+.uploadbutton {
+  display: inline-block;
+  background: #F6A623;              
+  color: #fff;                 
+  text-decoration: none;            
+  padding: 0.82rem 1rem;           
+  border-radius: 4px;                
+  font-size: 1.07rem;                 
+  font-weight: bold;                
+  cursor: pointer;
+  transition: background 0.18s ease; 
+  box-shadow: 0 1px 4px #f6a62318;   
+}
+
+.uploadbutton:hover {
+  background: #e29b15;              
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.button-row .uploadbutton {
+  flex: 1;                
+  text-align: center;     
+  padding: 0.82rem 0;     
+  max-width: 300px;       
+}
+
 button {
     background: #F6A623;
     color: #fff;
@@ -157,12 +189,12 @@ button:hover {
 }
  
 .results-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+    border: 4px solid black;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: red;
 }
- 
+
 .results-table th {
     text-align: left;
     padding: 0.3rem;
@@ -173,7 +205,7 @@ button:hover {
  
 .results-table td {
     padding: 0.3rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid black;
 }
  
 .container {
@@ -206,4 +238,32 @@ button:hover {
 .btn-outline{
 background-color: yellow;
 color: black;
+}
+
+.outer-successbox{
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    border: 10px black;
+    margin-right:300px;
+}
+
+.uploadbutton {
+    background: #F6A623;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 0.82rem;
+    border-radius: 4px;
+    font-size: 1.07rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.18s;
+    margin-top: 0.4rem;
+    box-shadow: 0 1px 4px #f6a62318;
 }
