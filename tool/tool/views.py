@@ -82,11 +82,17 @@ def uploadsuccess(request):
                 if value and isinstance(value[0], dict):
                     value = flatten_list_of_dicts(value, key)
                 elif value and isinstance(value[0], str):
-                    value = flatten_list_of_strings(value)
+                    value = ', '.join(value)  # Format skills as a comma-separated string
                 else:
                     value = ""
             elif not isinstance(value, str):
                 value = str(value)
+
+            if key == 'certification_&_specialized_training':
+                if isinstance(value, list) and value and isinstance(value[0], dict):
+                    value = [cert.get('name', '') for cert in value]  # Extract only the 'name' field for certifications
+                else:
+                    value = ""  # Handle cases where value is not a list of dictionaries
 
             table_data.append({'label': label, 'value': value})
 
