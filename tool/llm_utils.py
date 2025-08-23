@@ -78,7 +78,7 @@ def fill_docx_template(data, output_path, template_path=Path(__file__).parent / 
     context = {
         "name": data.get("name", "N/A"),
         "professional_summary": data.get("professional_summary", "No summary."),
-        "skills": data.get("skills", []),
+        "skills": ", ".join(data.get("skills", [])) if isinstance(data.get("skills", []), list) else data.get("skills", ""),
         "professional_experience": data.get("professional_experience", []),
         "education": data.get("education", []),
         "certification_specialized_training": data.get("certification_&_specialized_training", []),
