@@ -1,84 +1,86 @@
-import fitz  # PyMuPDF
+# llm_utils.py
+import os
 import requests
+import json
 import re
 from pathlib import Path
+import fitz
 from docxtpl import DocxTemplate
-import os
-import json
 
-# PDF Extraction
-def extract_text_from_pdf(pdf_content):
+# ---- OLLAMA CONFIG ----
+# Defaults work on bare‑metal Windows; override via env when in Docker/Azure.
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma:2b")
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "90"))
+
+def ask_ollama_gemma(prompt, model: str = None):
+    base = OLLAMA_BASE_URL.rstrip("/")
+    model = model or OLLAMA_MODEL
+    url = f"{base}/api/generate"
+    try:
+        resp = requests.post(
+            url,
+            headers={"Content-Type": "application/json"},
+            json={"model": model, "prompt": prompt, "stream": False},
+            timeout=OLLAMA_TIMEOUT,
+        )
+        print(f"[DEBUG] POST {url} -> {resp.status_code}")
+        print(f"[DEBUG] Ollama raw: {resp.text[:1000]}")
+        resp.raise_for_status()
+        data = resp.json()
+        # Ollama returns {"response": "..."} where the inner text is your model output.
+        return data.get("response", "")
+    except requests.exceptions.RequestException as e:
+        return f"[LLM ERROR] Request to Ollama failed: {e}"
+
+def extract_text_from_pdf(pdf_content: bytes) -> str:
     try:
         doc = fitz.open(stream=pdf_content, filetype="pdf")
-        text = ""
-        for page in doc:
-            text += page.get_text()
+        text = "".join(p.get_text() for p in doc)
         doc.close()
-        print("[INFO] PDF text extraction complete.")
         return text.strip()
     except Exception as e:
         return f"[PDF PARSE ERROR] {e}"
 
-# Gemma 3 via Ollama API call
-def ask_ollama_gemma(prompt, model="gemma3:latest"):
-    url = "http://localhost:11434/api/generate"
-    headers = {"Content-Type": "application/json"}
-    data = {
-        "model": model,
-        "prompt": prompt,
-        "stream": False
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        print(f"[DEBUG] Ollama status: {response.status_code}")
-        print(f"[DEBUG] Ollama raw response: {response.text[:1000]}")
-
-        if response.status_code == 200:
-            return response.json()["response"]
-        else:
-            return f"[LLM ERROR] {response.status_code}: {response.text}"
-    except requests.exceptions.RequestException as e:
-        return f"[LLM ERROR] Request to Ollama failed: {e}"
-
-# Extract structured fields
-def extract_resume_fields(parsed_text):
+def extract_resume_fields(parsed_text: str) -> str:
     prompt = f"""
-You are an expert resume parser. Based on the following resume text, extract the information for the fields:
-"name", "professional_summary", "professional_experience", "education", "certification_&_specialized_training", and "skills".
-
-For "professional_experience", "education", and "certification_&_specialized_training", return a LIST of dictionaries, where each dictionary represents an entry and contains relevant sub-fields (e.g., for experience: "title", "company", "dates", "description"; for education: "degree", "institution", "dates").
-For "skills", return a LIST of strings.
-For "professional_summary" and "name", return a single string.
+Return ONLY valid JSON (no backticks).
+Fields:
+- name: string
+- professional_summary: string
+- professional_experience: list of {{title, company, dates, description}}
+- education: list of {{degree, institution, dates}}
+- certification_&_specialized_training: list of {{name, issuer, date}}
+- skills: list of strings
 
 Resume Text:
-\"\"\"
-{parsed_text}
-\"\"\"
+\"\"\"{parsed_text}\"\"\"
 """
     print("[INFO] Sending parsed text to Gemma 3 via Ollama...")
     return ask_ollama_gemma(prompt)
 
-# Parse JSON safely
-def parse_llm_response(response_text):
-    json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-    if json_match:
+def parse_llm_response(response_text: str) -> dict:
+    # Try strict JSON first
+    try:
+        return json.loads(response_text)
+    except json.JSONDecodeError:
+        pass
+    # Fallback: extract first JSON object
+    m = re.search(r'\{[\s\S]*\}', response_text)
+    if m:
         try:
-            return json.loads(json_match.group(0))
+            return json.loads(m.group(0))
         except json.JSONDecodeError as e:
-            print(f"[WARN] Failed to decode LLM JSON response: {e}")
-            print(f"[DEBUG] Malformed JSON: {json_match.group(0)}")
-    print("[WARN] Failed to decode LLM response.")
-    print(f"[DEBUG] Full response: {response_text}")
+            print(f"[WARN] JSON decode failed: {e}")
+    print("[WARN] Could not parse LLM output as JSON")
     return {}
 
-# Fill DOCX template
-def fill_docx_template(data, output_path, template_path=Path(__file__).parent / "templates" / "Final Template.docx"):
+def fill_docx_template(data: dict, output_path: Path, template_path: Path):
     doc = DocxTemplate(str(template_path))
     context = {
         "name": data.get("name", "N/A"),
         "professional_summary": data.get("professional_summary", "No summary."),
-        "skills": ", ".join(data.get("skills", [])) if isinstance(data.get("skills", []), list) else data.get("skills", ""),
+        "skills": ", ".join(data.get("skills", [])) if isinstance(data.get("skills", list)) else data.get("skills", ""),
         "professional_experience": data.get("professional_experience", []),
         "education": data.get("education", []),
         "certification_specialized_training": data.get("certification_&_specialized_training", []),
@@ -87,7 +89,6 @@ def fill_docx_template(data, output_path, template_path=Path(__file__).parent / 
     doc.save(str(output_path))
     print(f"[INFO] DOCX saved to {output_path}")
 
-# Main pipeline
 def process_pdf(uploaded_file):
     pdf_bytes = uploaded_file.read()
     parsed_text = extract_text_from_pdf(pdf_bytes)
@@ -105,13 +106,21 @@ def process_pdf(uploaded_file):
     if not data:
         return "Failed to parse LLM response into JSON.", "", {}
 
-    output_dir = Path(__file__).parent / "static"
-    output_docx_path = output_dir / "filled_resume.docx"
-    fill_docx_template(data, output_docx_path)
+    # Use MEDIA, not static
+    media_dir = Path(os.getenv("MEDIA_ROOT", Path(__file__).resolve().parent.parent / "media"))
+    media_dir.mkdir(parents=True, exist_ok=True)
+
+    output_docx_path = media_dir / "filled_resume.docx"
+
+    # Make sure the template path matches your actual template location.
+    # If your templates/ is at project root (same level as manage.py), use BASE_DIR / "templates"
+    project_root = Path(__file__).resolve().parent.parent  # adjust if your layout differs
+    template_path = project_root / "templates" / "Final Template.docx"
+
+    fill_docx_template(data, output_docx_path, template_path)
 
     return (
         llm_response,
-        "/static/" + output_docx_path.name,
+        "/media/" + output_docx_path.name,
         data,
     )
-
