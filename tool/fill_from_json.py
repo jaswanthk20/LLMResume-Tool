@@ -7,8 +7,15 @@ from llm_utils import fill_docx_template
 
 def main(json_file: str, output_docx: str, template: str | None = None) -> None:
     """Fill a DOCX template using resume data stored in ``json_file``."""
-    with open(json_file, "r", encoding="utf-8") as jf:
-        data = json.load(jf)
+    try:
+        with open(json_file, "r", encoding="utf-8") as jf:
+            data = json.load(jf)
+    except FileNotFoundError:
+        print(f"Error: The file '{json_file}' was not found.")
+        return
+    except json.JSONDecodeError:
+        print(f"Error: The file '{json_file}' is not a valid JSON file.")
+        return
 
     template_path = Path(template) if template else Path(__file__).parent / "templates" / "Final Template.docx"
     fill_docx_template(data, Path(output_docx), template_path=template_path)

@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'llmresume-tool'
+
+steps:
+- task: Docker@2
+  displayName: Build and push an image to Azure Container Registry
+  inputs:
+    command: buildAndPush
+    repository: $(imageName)
+    dockerfile: '**/Dockerfile'
+    containerRegistry: '<your-acr-service-connection>'
+    tags: |
+      $(Build.BuildId)

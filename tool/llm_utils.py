@@ -13,6 +13,15 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma:2b")
 OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "90"))
 
+
+class OllamaError(Exception):
+    pass
+
+
+class PDFParseError(Exception):
+    pass
+
+
 def ask_ollama_gemma(prompt, model: str = None):
     base = OLLAMA_BASE_URL.rstrip("/")
     model = model or OLLAMA_MODEL
@@ -24,14 +33,12 @@ def ask_ollama_gemma(prompt, model: str = None):
             json={"model": model, "prompt": prompt, "stream": False},
             timeout=OLLAMA_TIMEOUT,
         )
-        print(f"[DEBUG] POST {url} -> {resp.status_code}")
-        print(f"[DEBUG] Ollama raw: {resp.text[:1000]}")
         resp.raise_for_status()
         data = resp.json()
-        # Ollama returns {"response": "..."} where the inner text is your model output.
         return data.get("response", "")
     except requests.exceptions.RequestException as e:
-        return f"[LLM ERROR] Request to Ollama failed: {e}"
+        raise OllamaError(f"Request to Ollama failed: {e}") from e
+
 
 def extract_text_from_pdf(pdf_content: bytes) -> str:
     try:
@@ -39,8 +46,9 @@ def extract_text_from_pdf(pdf_content: bytes) -> str:
         text = "".join(p.get_text() for p in doc)
         doc.close()
         return text.strip()
-    except Exception as e:
-        return f"[PDF PARSE ERROR] {e}"
+    except fitz.FitzError as e:
+        raise PDFParseError(f"Failed to parse PDF: {e}") from e
+
 
 def extract_resume_fields(parsed_text: str) -> str:
     prompt = f"""
@@ -90,23 +98,21 @@ def fill_docx_template(data: dict, output_path: Path, template_path: Path):
     print(f"[INFO] DOCX saved to {output_path}")
 
 def process_pdf(uploaded_file):
-    pdf_bytes = uploaded_file.read()
-    parsed_text = extract_text_from_pdf(pdf_bytes)
-    if parsed_text.startswith("[PDF PARSE ERROR]"):
-        return parsed_text, "", {}
+    try:
+        pdf_bytes = uploaded_file.read()
+        parsed_text = extract_text_from_pdf(pdf_bytes)
+    except PDFParseError as e:
+        return str(e), "", {}
 
-    llm_response = extract_resume_fields(parsed_text)
-    print("[DEBUG] Raw LLM response:\n", llm_response)
-
-    if llm_response.startswith("[LLM ERROR]") or "[PARSE ERROR]" in llm_response:
-        print("[ERROR] LLM failed: ", llm_response)
-        return llm_response, "", {}
+    try:
+        llm_response = extract_resume_fields(parsed_text)
+    except OllamaError as e:
+        return str(e), "", {}
 
     data = parse_llm_response(llm_response)
     if not data:
         return "Failed to parse LLM response into JSON.", "", {}
 
-    # Use MEDIA, not static
     media_dir = Path(os.getenv("MEDIA_ROOT", Path(__file__).resolve().parent.parent / "media"))
     media_dir.mkdir(parents=True, exist_ok=True)
 
